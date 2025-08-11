@@ -1,0 +1,56 @@
+import axios from 'axios';
+import * as esbuild from 'esbuild-wasm';
+ 
+export const unpkgPathPlugin = () => { //that returns an obj
+  return {
+    //name ppty and setup fn
+    name: 'unpkg-path-plugin',   //just for debugging purpose identify with their name if there are different plugin present
+    setup(build: esbuild.PluginBuild) {// is automatically called by esbuild with a single argument and we call it built
+        // build arg present the bundling process:find some file,parsing it,transpiling it and then joining a bunch of different files together
+      build.onResolve({ filter: /.*/ }, async (args: any) => {
+        console.log('onResolve', args);
+        if(args.path==="index.js"){
+             return { path: args.path, namespace:'a' };
+
+        }else if(args.path==="tiny-test-pkg"){
+               return { path:"https://unpkg.com/tiny-test-pkg@1.0.0/index.js" , namespace:'a' };
+
+        }
+       
+      });
+      //onResolve figure out where the index.js file is stored
+      //if there any import/export/require/exports figure out where the requested file is
+       //filter is a RE ,are exectuded against the file name
+       //namespace means that onresolve apply the function that have namespace  B   
+      build.onLoad({ filter: /.*/ }, async (args: any) => {
+        console.log('onLoad', args);
+        
+
+        // onLoad:attempt to load up the indexedDB.js file
+        //attempt to load taht file up
+
+        //parse the index.js file find any import/export/require/exports
+ 
+        if (args.path === 'index.js') {
+          return {
+            loader: 'jsx',
+            contents: `
+              import message from 'tiny-test-pkg';
+              console.log(message);
+            `,
+          };
+        } 
+
+        const {data}=await axios.get(args.path)
+        console.log(data);
+         return {
+            loader: 'jsx',
+            contents: 
+              data,
+          };
+        
+        
+      });
+    },
+  };
+};
