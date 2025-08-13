@@ -7,7 +7,8 @@ interface previewProps {
 
 const html = `
 <html>
-  <head></head>
+  <head>
+  <style>html{background-color:white}</style></head>
   <body>
     <div id="root"></div>
     <script>
@@ -33,12 +34,15 @@ const Preview: React.FC<previewProps> = ({code}) => {
   useEffect(() => {
     if (iframe.current) {
       iframe.current.srcdoc = html;
-      iframe.current?.contentWindow?.postMessage(code, "*");
+   setTimeout(() => {
+       iframe.current?.contentWindow?.postMessage(code, "*");
+
+   }, 50);
     }
   },[code]);
   return <div className="iframe-wrapper">
     <iframe 
-  style={{backgroundColor:"white",height:"100%"}}
+  style={{height:"100%",width:"100%"}}
     ref={iframe}
     sandbox="allow-scripts"
     srcDoc={html}
