@@ -13,6 +13,8 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
   const[innerHeight,setHeight]=useState(window.innerHeight)
     const[innerWidth,setWidth]=useState(window.innerWidth)
     const[width,setWidthh]=useState(window.innerWidth*0.75)
+
+
   useEffect(()=>{
     let timer:any;
     const listener=()=>{
@@ -29,7 +31,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       }, 100);
       
     }
-    window.addEventListener('rersize',listener)
+    window.addEventListener('resize',listener)
     return()=>{
       window.removeEventListener('resize',listener)
     }

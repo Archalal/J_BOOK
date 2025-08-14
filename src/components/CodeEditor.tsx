@@ -16,20 +16,26 @@ const CodeEditor: React.FC<MonacoEditorProps> = ({
 }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
+
   const onEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     editor.onDidChangeModelContent(() => {
       onChange(editor.getValue());
-      // console.log(editor.getValue())
+      // console.log("Monaco editor value",editor.getValue())
     });
+    // console.log("Value of an editor",editor.getModel());
+    
     editor.getModel()?.updateOptions({ tabSize: 2 });
   };
+
 
   const onFormatClick = async () => {
     if (!editorRef.current) return;
 
     // Get current value from editor
     const unformatted = editorRef.current.getModel()?.getValue() || "";
+    // console.log("unformatted",unformatted);
+    
 
     // Format the value
     const formatted = (await prettier.format(unformatted, {
@@ -40,7 +46,7 @@ const CodeEditor: React.FC<MonacoEditorProps> = ({
       singleQuote: true,
     })) .replace(/\n/g,'');
    
-
+   console.log("formatted",formatted)
     // Set the formatted value back in editor
     editorRef.current.setValue(formatted);
   };

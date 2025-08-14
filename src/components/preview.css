@@ -20,3 +20,11 @@
   opacity: 0;
   pointer-events: none; /* Optional: so overlay doesn’t block interaction */
 }
+
+.preview-err{
+  position: absolute;
+  top: 10px;
+  left: 78%;
+  color: red;
+
+}

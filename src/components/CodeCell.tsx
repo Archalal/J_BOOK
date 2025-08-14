@@ -10,13 +10,15 @@ import Resizeable from "./Resizeable";
 const CodeCell=()=>{
   const [data, setData] = useState<string>("");
   const[code,setCode]=useState("")
+  const[error,setError]=useState("")
  
 
   
   useEffect(() => {
   const timer = setTimeout(async () => {
     const output = await bundle(data);
-    setCode(output);
+    setCode(output.code);
+    setError(output.err)
     console.log(output);
   }, 1000);
 
@@ -29,7 +31,7 @@ const CodeCell=()=>{
   
   
   
-
+// console.log(data,"first")
 
 
 
@@ -44,7 +46,7 @@ const CodeCell=()=>{
     
   />
   </Resizeable>
-   <Preview  code={code} />
+   <Preview  code={code} errorMessage={error} />
    </div>
 
        

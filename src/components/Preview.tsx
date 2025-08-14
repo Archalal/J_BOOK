@@ -3,6 +3,7 @@ import './preview.css'
 
 interface previewProps {
   code: string;
+  errorMessage:string;
 }
 
 const html = `
@@ -12,22 +13,31 @@ const html = `
   <body>
     <div id="root"></div>
     <script>
+    const errorHandler=(err)=>{
+
+    const root=document.querySelector('#root');
+    root.innerHTML='<div style="color:red;">'+err+'</div>' ;
+    }
+    window.addEventListener('error',(event)=>{
+    event.prevetDefault()
+    errorHandler(event.error)})
+
       window.addEventListener('message', (event) => {
         try {
           eval(event.data);
           
         
         } catch (err) {
-          const root = document.querySelector('#root');
-          root.innerHTML = '<div style="color:red;">' + err + '</div>';
-          console.log(err)
+         errorHandler(err)
+         
+          console.error(err)
         }
       }, false);
     </script>
   </body>
 </html>
 `;
-const Preview: React.FC<previewProps> = ({code}) => {
+const Preview: React.FC<previewProps> = ({code,errorMessage}) => {
     // console.log(code);
     
   const iframe = useRef<HTMLIFrameElement>(null);
@@ -36,17 +46,24 @@ const Preview: React.FC<previewProps> = ({code}) => {
       iframe.current.srcdoc = html;
    setTimeout(() => {
        iframe.current?.contentWindow?.postMessage(code, "*");
-
    }, 50);
     }
   },[code]);
-  return <div className="iframe-wrapper">
+  return(
+     <>
+     <div className="iframe-wrapper">
     <iframe 
   style={{height:"100%",width:"100%"}}
     ref={iframe}
     sandbox="allow-scripts"
     srcDoc={html}
-    title="preview"/></div>;
+    title="preview"/>
+    </div>
+    {
+      errorMessage&&<div className="preview-err">{errorMessage}</div>
+    }
+    </>
+  )
 };
 
 export default Preview;

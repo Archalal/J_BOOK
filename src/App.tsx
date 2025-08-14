@@ -1,5 +1,6 @@
 
-import CodeCell from "./components/CodeCell";
+// import CodeCell from "./components/CodeCell";
+import TestEditor from "./components/TestEditor";
 
 
 
@@ -13,7 +14,8 @@ function App() {
 
   return ( 
     <>
-   <CodeCell />
+    <TestEditor />
+   {/* <CodeCell /> */}
     
    
 
