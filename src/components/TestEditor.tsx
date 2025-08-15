@@ -1,12 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import './TestEditor.css'
+import type { Cell } from "../State";
+import { useActions } from "../Hooks/UseAction";
 
 
-const TestEditor: React.FC = () => {
+interface TestEditorProps{
+  cell:Cell
+}
+const TestEditor: React.FC<TestEditorProps> = ({cell}) => {
   const [editing, setEditing] = useState(false);
   const refDiv = useRef<HTMLDivElement>(null);
-  const [value,setValue]=useState<string>("# Header")
+  const {updateCell}=useActions();
   useEffect(() => {
     const listener = (event: PointerEvent) => {
       if (refDiv.current && refDiv.current.contains(event.target as Node)) {
@@ -25,10 +30,10 @@ const TestEditor: React.FC = () => {
   return (
      <div ref={refDiv}>
       {editing ? (
-        <MDEditor value={value} onChange={(e)=>setValue(e  ||"")} />
+        <MDEditor value={cell.content} onChange={(e)=>updateCell(cell.id,e||"")} />
       ) : (
         <div className="card-content" onClick={() => setEditing(true)}>
-          <MDEditor.Markdown source={value} />
+          <MDEditor.Markdown source={cell.content||"Click to edit"} />
         </div>
       )}
     </div>

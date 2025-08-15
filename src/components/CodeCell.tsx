@@ -3,20 +3,27 @@ import CodeEditor from "./CodeEditor";
 import Preview from "./Preview";
 import bundle from "../bundler";
 import Resizeable from "./Resizeable";
+import type { Cell } from "../State";
+import { useActions } from "../Hooks/UseAction";
 
 
 
+interface CodeCellProps{
+  cell:Cell
+}
 
-const CodeCell=()=>{
-  const [data, setData] = useState<string>("");
+const CodeCell:React.FC<CodeCellProps>=({cell})=>{
+  
   const[code,setCode]=useState("")
   const[error,setError]=useState("")
+
+  const{updateCell}=useActions()
  
 
   
   useEffect(() => {
   const timer = setTimeout(async () => {
-    const output = await bundle(data);
+    const output = await bundle(cell.content);
     setCode(output.code);
     setError(output.err)
     console.log(output);
@@ -25,7 +32,7 @@ const CodeCell=()=>{
   return () => {
     clearTimeout(timer);
   };
-}, [data]);
+}, [cell.content]);
 
 
   
@@ -42,7 +49,7 @@ const CodeCell=()=>{
         flexDirection:"row"
      }}>
   <Resizeable direction="horizontal">
-      <CodeEditor initialValue="const a=10"  onChange={(value)=>setData(value)}
+      <CodeEditor initialValue={cell.content}  onChange={(value)=>updateCell(cell.id,value)}
     
   />
   </Resizeable>
