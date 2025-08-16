@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CodeEditor from "./CodeEditor";
 import Preview from "./Preview";
-import bundle from "../bundler";
 import Resizeable from "./Resizeable";
 import type { Cell } from "../State";
 import { useActions } from "../Hooks/UseAction";
+import { useTypedSelector } from "../Hooks/Use-TypedSelector";
+
 
 
 
@@ -14,25 +15,27 @@ interface CodeCellProps{
 
 const CodeCell:React.FC<CodeCellProps>=({cell})=>{
   
-  const[code,setCode]=useState("")
-  const[error,setError]=useState("")
-
-  const{updateCell}=useActions()
+  const{updateCell,createBundle}=useActions()
+  const bundle=useTypedSelector((state)=>state.bundle[cell.id])
+  
+  console.log(bundle);
+  
  
 
   
   useEffect(() => {
   const timer = setTimeout(async () => {
-    const output = await bundle(cell.content);
-    setCode(output.code);
-    setError(output.err)
-    console.log(output);
+    // console.log("hello",cell.content)
+    // const output = await bundle(cell.content);
+    createBundle(cell.id,cell.content)
+   
+   
   }, 1000);
 
   return () => {
     clearTimeout(timer);
   };
-}, [cell.content]);
+}, [cell.content,cell.id,createBundle]);
 
 
   
@@ -53,7 +56,11 @@ const CodeCell:React.FC<CodeCellProps>=({cell})=>{
     
   />
   </Resizeable>
-   <Preview  code={code} errorMessage={error} />
+ <Preview
+  code={bundle?.code || ""}
+  errorMessage={bundle?.err || ""}
+/>
+
    </div>
 
        

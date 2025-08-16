@@ -2,7 +2,7 @@ import { ActionType } from "../Action-Types";
 import { produce } from "immer";
 import type { Action } from "../Action";
 import type { Cell } from "../Cell";
-import { context } from "esbuild-wasm";
+
 
 interface CellsState {
   loading: boolean;
@@ -44,7 +44,7 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
 
       return state;
     }
-    case ActionType.INSERT_CELL_BEFORE:
+    case ActionType.INSERT_CELL_AFTER:
       {
         const cell: Cell = {
           id: randomId(),
@@ -56,9 +56,9 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
           (id) => id === action.payload.id
         );
         if (foundIndex < 0) {
-          state.order.push(cell.id);
+          state.order.unshift(cell.id);
         } else {
-          state.order.splice(foundIndex, 0, cell.id);
+          state.order.splice(foundIndex+1, 0, cell.id);
         }
       }
       return state;

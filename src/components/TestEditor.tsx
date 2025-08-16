@@ -32,7 +32,7 @@ const TestEditor: React.FC<TestEditorProps> = ({cell}) => {
       {editing ? (
         <MDEditor value={cell.content} onChange={(e)=>updateCell(cell.id,e||"")} />
       ) : (
-        <div className="card-content" onClick={() => setEditing(true)}>
+        <div className="card-content" onClick={() => setEditing(true)}  style={{border:"1px solid grey"}}>
           <MDEditor.Markdown source={cell.content||"Click to edit"} />
         </div>
       )}
