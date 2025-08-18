@@ -5,73 +5,70 @@ import Resizeable from "./Resizeable";
 import type { Cell } from "../State";
 import { useActions } from "../Hooks/UseAction";
 import { useTypedSelector } from "../Hooks/Use-TypedSelector";
+import "./CodeCell.css";
+import { useCumulative } from "../Hooks/Use-Cummulative";
 
-
-
-
-interface CodeCellProps{
-  cell:Cell
+interface CodeCellProps {
+  cell: Cell;
 }
 
-const CodeCell:React.FC<CodeCellProps>=({cell})=>{
-  
-  const{updateCell,createBundle}=useActions()
-  const bundle=useTypedSelector((state)=>state.bundle[cell.id])
-  
-  console.log(bundle);
-  
- 
+const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
+  const { updateCell, createBundle } = useActions();
 
+  const bundle = useTypedSelector((state) => state.bundle[cell.id]);//single code(editor+preview)
+
+  const cumulativeResult = useCumulative(cell.id);
   
+
   useEffect(() => {
-  const timer = setTimeout(async () => {
-    // console.log("hello",cell.content)
-    // const output = await bundle(cell.content);
-    createBundle(cell.id,cell.content)
-   
-   
-  }, 1000);
+    let isMounted = true;
 
-  return () => {
-    clearTimeout(timer);
-  };
-}, [cell.content,cell.id,createBundle]);
+    const createBundleWithLoading = async () => {
+      try {
+        await createBundle(cell.id, cumulativeResult || "// Empty cell");
+      } finally {
+        if (!isMounted) return;
+      }
+    };
 
+    // Run immediately if no bundle exists
+    if (!bundle) {
+      createBundleWithLoading();
+      return;
+    }
 
-  
-  
-  
-// console.log(data,"first")
+    // Debounce: run after 750ms when content changes
+    const timer = setTimeout(() => {
+      createBundleWithLoading();
+    }, 750);
 
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [cumulativeResult, cell.id, createBundle]);
 
+  return (
+    <Resizeable direction="vertical">
+      <div
+        style={{
+          height: "100%",
+          display: "flex",
+          width: "100%",
+          flexDirection: "row",
+        }}
+      >
+        <Resizeable direction="horizontal">
+          <CodeEditor
+            initialValue={cell.content}
+            onChange={(value) => updateCell(cell.id, value)}
+          />
+        </Resizeable>
 
-  return ( 
-    <>
-  <Resizeable  direction="vertical">
-     <div style={{height:"100%",display:"flex",width:"100%",
-        flexDirection:"row"
-     }}>
-  <Resizeable direction="horizontal">
-      <CodeEditor initialValue={cell.content}  onChange={(value)=>updateCell(cell.id,value)}
-    
-  />
-  </Resizeable>
- <Preview
-  code={bundle?.code || ""}
-  errorMessage={bundle?.err || ""}
-/>
-
-   </div>
-
-       
-
-  </Resizeable>
-  
-    </>
-
-
-
+        <Preview code={bundle?.code || ""} errorMessage={bundle?.err || ""} />
+      </div>
+    </Resizeable>
   );
-}
+};
 
 export default CodeCell;

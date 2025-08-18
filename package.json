@@ -1,5 +1,5 @@
 {
-  "name": "jbook",
+  "name": "local-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+    
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.0",

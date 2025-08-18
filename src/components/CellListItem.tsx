@@ -10,7 +10,7 @@ interface CellListItemProps{
 }
 
 const CellListItem:React.FC <CellListItemProps> = ({cell}) => {
-  console.log("celllist item",cell.id)
+  // console.log("celllist item",cell.id)
   let child;
   if(cell.type==="code"){
     child=

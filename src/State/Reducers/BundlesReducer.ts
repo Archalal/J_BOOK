@@ -14,7 +14,7 @@ interface bundleState{
 
 const initialState:bundleState={}
 
-const reducer= produce((state:bundleState=initialState,action:Action):bundleState=>{
+const reducer= produce((state:bundleState=initialState,action:Action)=>{
     switch(action.type){
         case ActionType.BUNDLE_START:
             state[action.payload.id]={
@@ -22,16 +22,16 @@ const reducer= produce((state:bundleState=initialState,action:Action):bundleStat
                 code:"",
                 err:""
             }
-        return state;
+        break;
         case ActionType.BUNDLE_COMPLETE:
             state[action.payload.id]={
-                loading:false,
-                code:action.payload.bundle.code,
-                err:action.payload.bundle.err
+               loading: false,
+                    code: action.payload.bundle.code,
+                    err: action.payload.bundle.err
             }
-            return state
+             break;
         default:
-            return state
+             break;
         }
 
     },initialState)

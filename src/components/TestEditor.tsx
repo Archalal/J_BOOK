@@ -17,7 +17,7 @@ const TestEditor: React.FC<TestEditorProps> = ({cell}) => {
       if (refDiv.current && refDiv.current.contains(event.target as Node)) {
         return;
       }
-      console.log(event.target);
+   
       setEditing(false);
     };
     document.addEventListener("click", listener, { capture: true });

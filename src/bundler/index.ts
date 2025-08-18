@@ -1,22 +1,19 @@
-// bundler.ts
 import * as esbuild from "esbuild-wasm";
 import { unpkgPathPlugin } from "./plugin/unpkg_path_plugin";
 import { fetchPlugin } from "./plugin/fetch-plugin";
 
-// Initialize esbuild once when the module loads
-esbuild
-  .initialize({
-    worker: true,
-    wasmURL: "https://unpkg.com/esbuild-wasm@0.25.8/esbuild.wasm",
-  })
-  .then(() => {
-    console.log("Esbuild initialized");
-  })
-  .catch((err) => {
-    console.error("Failed to initialize esbuild", err);
-  });
+let isInitialized = false;
 
 const bundle = async (rawcode: string) => {
+  if (!isInitialized) {
+    await esbuild.initialize({
+      worker: true,
+      wasmURL: "https://unpkg.com/esbuild-wasm@0.25.8/esbuild.wasm",
+    });
+    isInitialized = true;
+    console.log("Esbuild initialized");
+  }
+
   try {
     const result = await esbuild.build({
       entryPoints: ["index.js"],
@@ -27,19 +24,23 @@ const bundle = async (rawcode: string) => {
         "process.env.NODE_ENV": '"production"',
         global: "window",
       },
+      jsxFactory:"_React.createElement",
+      jsxFragment:"_React.Fragment"
     });
-    return {code:result.outputFiles[0].text,
-      err:""
-    }
+
+    return {
+      code: result.outputFiles[0].text,
+      err: "",
+    };
   } catch (err) {
     if (err instanceof Error) {
       return {
         code: "",
         err: err.message,
       };
-    } else {
-      throw err;
     }
+    throw err;
   }
 };
+
 export default bundle;
