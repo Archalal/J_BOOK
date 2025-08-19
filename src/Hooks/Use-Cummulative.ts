@@ -29,7 +29,7 @@ export const useCumulative = (cellid: string): string => {
 
     const cumulativeCode: string[] = [];
 
-    for (let c of orderedCells) {
+    for (const c of orderedCells) {
       if (c.type !== "code") continue;
 
       if (c.id === cellid) {

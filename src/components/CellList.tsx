@@ -5,13 +5,13 @@ import AddCell from "./AddCell";
 import './CellList.css'
 const CellList: React.FC = () => {
   const { order, data } = useTypedSelector((state) => state.cells);
-  // console.log("order,data", order, data);
+ 
 
   const cells = useMemo(() => {
     return order.map((id) => data[id]);
   }, [order, data]);
 
-  // console.log("cellll",cells);  //array of object [{data}]
+  
   const renderedCells = cells.map((cell) => (
     <Fragment key={cell.id}>
       <AddCell forceVisible={false} previousCellId={cell.id} />
